@@ -1,0 +1,13 @@
+#!/bin/bash
+
+for i in ./* ; do
+  if [ -d "$i" ]; then
+    directory=$(basename $i)
+    echo "=================================================================="
+    echo $directory
+    cd $directory
+    git status
+    cd ..
+  fi
+done
+echo "=================================================================="
