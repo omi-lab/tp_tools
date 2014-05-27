@@ -1,0 +1,16 @@
+#!/bin/bash
+
+for i in ./* ; do
+  if [ -d "$i" ]; then
+    directory=$(basename $i)
+
+    if [[ $directory == tdp_* ]]; then
+      echo "=================================================================="
+      echo $directory
+      cd $directory
+      git diff HEAD $1/master --name-only
+      cd ..
+    fi
+  fi
+done
+echo "=================================================================="
