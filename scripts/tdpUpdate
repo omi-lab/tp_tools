@@ -1,5 +1,6 @@
 #!/bin/bash
 
+#---- Check out any modules that we have not yet got ----
 for i in ./* ; do
   if [ -d "$i" ]; then
 
@@ -7,11 +8,16 @@ for i in ./* ; do
 
     submodules="submodules.pri"
     if [ -e "$submodules" ]; then
-      
+
       remote=$(git config --get remote.origin.url)
       remote=${remote%/*}
-  
-#echo $remote
+      
+      #---- Special case for tdp_build ----
+      if [ ! -d "../tdp_build" ]; then
+        cd ../
+        git "clone" "$remote/tdp_build.git"
+        cd $(basename $i)
+      fi
 
       exec<$submodules
       while read line
@@ -27,8 +33,6 @@ for i in ./* ; do
             cd $(basename $i)
           fi
         done
-
-
         fi
       done
     fi
@@ -37,12 +41,7 @@ for i in ./* ; do
   fi
 done
 
-
-
-
-
-
-
+#---- Update all modules ----
 for i in ./* ; do
   if [ -d "$i" ]; then
     directory=$(basename $i)
