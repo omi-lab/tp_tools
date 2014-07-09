@@ -2,6 +2,49 @@
 
 for i in ./* ; do
   if [ -d "$i" ]; then
+
+    cd $(basename $i)
+
+    submodules="submodules.pri"
+    if [ -e "$submodules" ]; then
+      
+      remote=$(git config --get remote.origin.url)
+      remote=${remote%/*}
+  
+#echo $remote
+
+      exec<$submodules
+      while read line
+      do
+        if [[ $line == SUBDIRS* ]]; then
+        IFS='=' read -a arr <<< "$line"
+        for item in "${arr[@]:1}"
+        do
+          item=$(echo "$item" | tr -d ' ')
+          if [ ! -d "../$item" ]; then
+            cd ../
+            git "clone" "$remote/$item.git"
+            cd $(basename $i)
+          fi
+        done
+
+
+        fi
+      done
+    fi
+
+    cd ..
+  fi
+done
+
+
+
+
+
+
+
+for i in ./* ; do
+  if [ -d "$i" ]; then
     directory=$(basename $i)
     cd $directory
     git pull
