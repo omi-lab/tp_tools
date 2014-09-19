@@ -1,5 +1,15 @@
 #!/bin/bash
 
+#---- Update all modules ----
+for i in ./* ; do
+  if [ -d "$i" ]; then
+    directory=$(basename $i)
+    cd $directory
+    git pull
+    cd ..
+  fi
+done
+
 #---- Check out any modules that we have not yet got ----
 for i in ./* ; do
   if [ -d "$i" ]; then
@@ -37,16 +47,6 @@ for i in ./* ; do
       done
     fi
 
-    cd ..
-  fi
-done
-
-#---- Update all modules ----
-for i in ./* ; do
-  if [ -d "$i" ]; then
-    directory=$(basename $i)
-    cd $directory
-    git pull
     cd ..
   fi
 done
