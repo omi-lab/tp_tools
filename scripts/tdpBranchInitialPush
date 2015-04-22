@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: tdpBranchInitialPush branch"
+  exit 1
+fi
+
+for i in ./* ; do
+  if [ -d "$i" ]; then
+    directory=$(basename $i)    
+    cd $directory
+    git push --set-upstream origin $1
+    cd ..
+  fi
+done
+
+echo "$result" | column -t -s "$se"
+
