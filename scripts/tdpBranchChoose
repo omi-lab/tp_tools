@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: tdpBranchChoose branch"
+  exit 1
+fi
+
+nl=$'\n'
+se=$'\t'
+
+result="Module"$se"Branch"
+
+for i in ./* ; do
+  if [ -d "$i" ]; then
+    directory=$(basename $i)    
+    cd $directory
+    line=`git checkout $1 2>&1 1>/dev/null`
+    result="$result$nl$directory$se$line"
+    cd ..
+  fi
+done
+
+echo "$result" | column -t -s "$se"

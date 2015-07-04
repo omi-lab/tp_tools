@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#Parameters
+# $1 = The branch name to create
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: tdpBranchFullCreate branch"
+  exit 1
+fi
+
+#---- Update all projects ----
+for i in ./* ; do
+  if [ -d "$i" ]; then
+    directory=$(basename $i)
+    if [[ $directory != build* ]]; then
+      echo "=================================================================="
+      echo $directory
+      cd $directory
+      tdpBranchCreate $1
+      cd ..
+    fi
+  fi
+done
+echo "=================================================================="

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+result='Module Branch'
+nl=$'\n'
+for i in ./* ; do
+  if [ -d "$i" ]; then
+    directory=$(basename $i)    
+    cd $directory
+    line=`git rev-parse --abbrev-ref HEAD`
+    result="$result$nl$directory $line"
+    cd ..
+  fi
+done
+
+echo "$result" | column -t 
