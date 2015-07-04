@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+  echo 'Usage:'
+  echo '  tdpDescription "A brief description."'
+  exit -1
+fi
+
+if [ ! -d ".git" ]; then
+  echo "Error! No .git directory!"
+  exit -1
+fi
+
+#Update the local
+echo $1 > .git/description
+
+#Update the remote
+remote=$(git config --get remote.origin.url)
+if [ !  -z  "$remote" ]; then
+  scp .git/description $remote/description
+fi
+
