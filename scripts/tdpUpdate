@@ -10,6 +10,13 @@ for i in ./* ; do
   fi
 done
 
+#---- Get any URL translation ----
+insteadof=$(git config --get-regexp 'url.*\.insteadof')
+if [ -n "$insteadof" ]; then
+  url=$(echo $insteadof | sed 's/^url\.\(.*\)\.insteadof .*/\1/')
+  insteadof=$(echo $insteadof | sed 's/^.*\.insteadof //')
+fi
+
 #---- Check out any modules that we have not yet got ----
 for i in ./* ; do
   if [ -d "$i" ]; then
@@ -19,7 +26,7 @@ for i in ./* ; do
     submodules="submodules.pri"
     if [ -e "$submodules" ]; then
 
-      remote=$(git config --get remote.origin.url)
+      remote=$(git config --get remote.origin.url | sed "s#^$insteadof#$url#")
       remote=${remote%/*}
       
       #---- Special case for tdp_build ----
