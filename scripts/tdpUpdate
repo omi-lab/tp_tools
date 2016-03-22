@@ -1,14 +1,30 @@
 #!/bin/bash
 
-#---- Update all modules ----
-for i in ./* ; do
-  if [ -d "$i" ]; then
-    directory=$(basename $i)
-    cd $directory
-    git pull
-    cd ..
+#Parameters:
+#  [directory]   directory to copy missing git modules from, instead of cloning.
+#  noupdate      don't update modules except if they are missing.
+
+while [ -n "$1" ]; do
+  if [ $1 = noupdate ]; then
+    NOPULL=1
+  else
+    [ -d $1 ] || { echo "Directory not found: $1"; exit; }
+    COPY_FROM=$1
   fi
+  shift
 done
+
+if [ -z "$NOPULL" ]; then
+  #---- Update all modules ----
+  for i in ./* ; do
+    if [ -d "$i" ]; then
+      directory=$(basename $i)
+      cd $directory
+      git pull
+      cd ..
+    fi
+  done
+fi
 
 #---- Get any URL translation ----
 insteadof=$(git config --get-regexp 'url.*\.insteadof')
@@ -32,7 +48,11 @@ for i in ./* ; do
       #---- Special case for tdp_build ----
       if [ ! -d "../tdp_build" ]; then
         cd ../
-        git "clone" "$remote/tdp_build.git"
+        if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/tdp_build ]; then
+          cp -rp $COPY_FROM/tdp_build .
+        else
+          git "clone" "$remote/tdp_build.git"
+        fi
         cd $(basename $i)
       fi
 
@@ -46,7 +66,11 @@ for i in ./* ; do
           item=$(echo "$item" | tr -d ' ')
           if [ ! -d "../$item" ]; then
             cd ../
-            git "clone" "$remote/$item.git"
+            if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/$item ]; then
+              cp -rp $COPY_FROM/$item .
+            else
+              git "clone" "$remote/$item.git"
+            fi
             cd $(basename $i)
           fi
         done
