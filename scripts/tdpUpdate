@@ -81,3 +81,8 @@ for i in ./* ; do
     cd ..
   fi
 done
+
+#---- Copy project.inc into top level directory ----
+if [ ! -f project.inc ]; then
+  [ -f */project.inc ] && cp */project.inc .
+fi
