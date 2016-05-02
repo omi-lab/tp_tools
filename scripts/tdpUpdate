@@ -89,3 +89,5 @@ done
 if [ ! -f project.inc ]; then
   [ -f */project.inc ] && cp */project.inc .
 fi
+
+exit 0
