@@ -1,8 +1,11 @@
 #!/bin/bash
 
-#Parameters:
-#  [directory]   directory to copy missing git modules from, instead of cloning.
-#  noupdate      don't update modules except if they are missing.
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "Usage:  ${0##*/} [directory] [noupdate]
+    directory  directory to copy missing git modules from, instead of cloning
+    noupdate   don't update modules except if they are missing"
+  exit
+fi
 
 while [ -n "$1" ]; do
   if [ $1 = noupdate ]; then
@@ -87,3 +90,4 @@ for i in ./* ; do
   fi
 done
 
+exit 0
