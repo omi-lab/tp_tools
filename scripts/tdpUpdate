@@ -55,6 +55,11 @@ for i in ./* ; do
         fi
         cd $(basename $i)
       fi
+      
+      #---- Copy project.inc into top level directory ----
+      if [ ! -f ../project.inc ]; then
+        [ -f project.inc ] && cp project.inc ../
+      fi
 
       exec<$submodules
       while read line
@@ -82,7 +87,3 @@ for i in ./* ; do
   fi
 done
 
-#---- Copy project.inc into top level directory ----
-if [ ! -f project.inc ]; then
-  [ -f */project.inc ] && cp */project.inc .
-fi
