@@ -1,14 +1,40 @@
 #!/bin/bash
 
-#---- Update all modules ----
-for i in ./* ; do
-  if [ -d "$i" ]; then
-    directory=$(basename $i)
-    cd $directory
-    git pull
-    cd ..
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+  echo "Usage:  ${0##*/} [directory] [noupdate]
+    directory  directory to copy missing git modules from, instead of cloning
+    noupdate   don't update modules except if they are missing"
+  exit
+fi
+
+while [ -n "$1" ]; do
+  if [ $1 = noupdate ]; then
+    NOPULL=1
+  else
+    [ -d $1 ] || { echo "Directory not found: $1"; exit; }
+    COPY_FROM=$1
   fi
+  shift
 done
+
+if [ -z "$NOPULL" ]; then
+  #---- Update all modules ----
+  for i in ./* ; do
+    if [ -d "$i" ]; then
+      directory=$(basename $i)
+      cd $directory
+      git pull
+      cd ..
+    fi
+  done
+fi
+
+#---- Get any URL translation ----
+insteadof=$(git config --get-regexp 'url.*\.insteadof')
+if [ -n "$insteadof" ]; then
+  url=$(echo $insteadof | sed 's/^url\.\(.*\)\.insteadof .*/\1/')
+  insteadof=$(echo $insteadof | sed 's/^.*\.insteadof //')
+fi
 
 #---- Check out any modules that we have not yet got ----
 for i in ./* ; do
@@ -19,14 +45,23 @@ for i in ./* ; do
     submodules="submodules.pri"
     if [ -e "$submodules" ]; then
 
-      remote=$(git config --get remote.origin.url)
+      remote=$(git config --get remote.origin.url | sed "s#^$insteadof#$url#")
       remote=${remote%/*}
       
       #---- Special case for tdp_build ----
       if [ ! -d "../tdp_build" ]; then
         cd ../
-        git "clone" "$remote/tdp_build.git"
+        if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/tdp_build ]; then
+          cp -rp $COPY_FROM/tdp_build .
+        else
+          git "clone" "$remote/tdp_build.git"
+        fi
         cd $(basename $i)
+      fi
+      
+      #---- Copy project.inc into top level directory ----
+      if [ ! -f ../project.inc ]; then
+        [ -f project.inc ] && cp project.inc ../
       fi
 
       exec<$submodules
@@ -39,7 +74,11 @@ for i in ./* ; do
           item=$(echo "$item" | tr -d ' ')
           if [ ! -d "../$item" ]; then
             cd ../
-            git "clone" "$remote/$item.git"
+            if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/$item ]; then
+              cp -rp $COPY_FROM/$item .
+            else
+              git "clone" "$remote/$item.git"
+            fi
             cd $(basename $i)
           fi
         done
@@ -50,3 +89,5 @@ for i in ./* ; do
     cd ..
   fi
 done
+
+exit 0
