@@ -37,6 +37,7 @@ if [ -n "$insteadof" ]; then
 fi
 
 #---- Check out any modules that we have not yet got ----
+[ -f project.inc ] && project_inc=0
 for i in ./* ; do
   if [ -d "$i" ]; then
 
@@ -60,8 +61,14 @@ for i in ./* ; do
       fi
       
       #---- Copy project.inc into top level directory ----
-      if [ ! -f ../project.inc ]; then
-        [ -f project.inc ] && cp project.inc ../
+      if [ -f project.inc ]; then
+        if [ ! -f ../project.inc ]; then
+          cp project.inc ../
+          project_inc=1
+        elif [ "$project_inc" = 1 ]; then
+          echo "Error! project.inc found in more than one sub-directory"
+          project_inc=2
+        fi
       fi
 
       exec<$submodules
@@ -89,5 +96,7 @@ for i in ./* ; do
     cd ..
   fi
 done
+
+[ "$project_inc" = 2 ] && rm -f project.inc
 
 exit 0
