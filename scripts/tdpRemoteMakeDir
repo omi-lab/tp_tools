@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: tdpRemoteSetOrigin \"remote-url\""
+  exit 1
+fi
+
+for i in ./* ; do
+  if [ -d "$i" ]; then
+    directory=$(basename $i)
+    DIR=`echo $1$directory.git | cut -d: -f2-`
+    echo "mkdir -p $DIR"
+    echo "cd $DIR"
+    echo "git init --bare"
+  fi
+done
+echo "=================================================================="
