@@ -38,6 +38,7 @@ fi
 
 #---- Check out any modules that we have not yet got ----
 [ -f project.inc ] && project_inc=0
+[ -f toolchain.pri ] && toolchain_pri=0
 for i in ./* ; do
   if [ -d "$i" ]; then
 
@@ -70,6 +71,17 @@ for i in ./* ; do
           project_inc=2
         fi
       fi
+      
+      #---- Copy toolchain.pri into top level directory ----
+      if [ -f toolchain.pri ]; then
+        if [ ! -f ../toolchain.pri ]; then
+          cp toolchain.pri ../
+          toolchain_pri=1
+        elif [ "$toolchain_pri" = 1 ]; then
+          echo "Error! toolchain.pri found in more than one sub-directory"
+          toolchain_pri=2
+        fi
+      fi
 
       exec<$submodules
       while read line
@@ -98,5 +110,6 @@ for i in ./* ; do
 done
 
 [ "$project_inc" = 2 ] && rm -f project.inc
+[ "$toolchain_pri" = 2 ] && rm -f toolchain.pri
 
 exit 0
