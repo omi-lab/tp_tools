@@ -112,4 +112,40 @@ done
 [ "$project_inc" = 2 ] && rm -f project.inc
 [ "$toolchain_pri" = 2 ] && rm -f toolchain.pri
 
+TMP_DB_FILE="/tmp/$$_make.db.txt"
+MODULE_SUBDIRS=""
+
+env -i make -pn -f ./project.inc > $TMP_DB_FILE 2>/dev/null
+while read var assign value; do
+  if [[ ${var} = MODULES ]] && [[ ${assign} = '=' ]]; then
+    MODULES+=" $value"
+    break
+  fi
+done < $TMP_DB_FILE
+
+
+for MODULE in ${MODULES}
+do
+  env -i make -pn -f "${MODULE}/submodules.pri" > $TMP_DB_FILE 2>/dev/null
+  while read var assign value; do
+    if [[ ${var} = SUBDIRS ]] && [[ ${assign} = '=' ]]; then
+      MODULE_SUBDIRS+=" $value"
+      break
+    fi
+  done < $TMP_DB_FILE
+done
+
+rm -f $TMP_DB_FILE
+
+for item in ${MODULE_SUBDIRS}
+do
+  if [ ! -d "$item" ]; then
+    if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/$item ]; then
+      cp -rp $COPY_FROM/$item .
+    else
+      git "clone" "$remote/$item.git"
+    fi
+  fi
+done
+
 exit 0
