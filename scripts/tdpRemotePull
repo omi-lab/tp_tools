@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: tdpRemotePull \"Remote\""
+  exit 1
+fi
+
+for i in ./* ; do
+  if [ -d "$i" ]; then
+    directory=$(basename $i)
+    echo "=================================================================="
+    echo $directory
+    cd $directory
+    git pull $1 master
+    cd ..
+  fi
+done
+echo "=================================================================="
