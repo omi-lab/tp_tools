@@ -1,0 +1,14 @@
+#!/bin/bash
+
+for i in ./* ; do
+  if [ -d "$i" ]; then
+    directory=$(basename $i)
+    echo "=================================================================="
+    echo $directory
+    cd $directory
+    git pull other master 
+    git push
+    cd ..
+  fi
+done
+echo "=================================================================="
