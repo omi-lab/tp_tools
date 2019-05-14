@@ -4,6 +4,15 @@ Scripts for managing projects made up of multiple git modules. Projects built us
 ## Installation
 Clone this repo and add the scripts directory to your path.
 
+### Mac
+```
+cd ~
+git clone https://github.com/tdp-libs/tdp_tools.git
+cd tdp_tools/scripts
+sudo sh -c 'pwd >> /etc/paths'
+
+```
+
 ## Usage
 * **tdpUpdate** - This performs git pull on each git module found in this directory and clones new modules that are listed in submodules.pri files. See the [tdp_build documentation](https://github.com/tdp-libs/tdp_build) for more information about the submodules.pri files.
 * **tdpStatus** - This performs git status on each git module found in this directory.
