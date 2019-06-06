@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: tdpXUpdate \"Directory\""
+  exit 1
+fi
+
+directory=$1
+echo "=================================================================="
+echo $directory
+cd $directory
+git pull
+cd ..
+

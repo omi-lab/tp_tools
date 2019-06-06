@@ -7,6 +7,13 @@ if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   exit
 fi
 
+if ! hash parallel 2>/dev/null; then
+  echo "\"parallel\" not found, install with one of the following:"
+  echo "  yum install parallel"
+  echo "  dnf install parallel"
+  echo "  apt-get install parallel"
+fi
+
 while [ -n "$1" ]; do
   if [ $1 = noupdate ]; then
     NOPULL=1
@@ -19,15 +26,20 @@ done
 
 if [ -z "$NOPULL" ]; then
   #---- Update all modules ----
-  for i in ./* ; do
-    if [ -d "$i" ]; then
-      directory=$(basename $i)
-      cd $directory
-      git pull
-      cd ..
-    fi
-  done
+  if hash parallel 2>/dev/null; then
+    tdpXListDirs | parallel -j $((`nproc`*2)) -I{} tdpXUpdate {}
+  else
+    for i in ./* ; do
+      if [ -d "$i" ]; then
+        directory=$(basename $i)
+        cd $directory
+        git pull
+        cd ..
+      fi
+    done
+  fi
 fi
+echo "=================================================================="
 
 #---- Get any URL translation ----
 insteadof=$(git config --get-regexp 'url.*\.insteadof')
@@ -37,6 +49,8 @@ if [ -n "$insteadof" ]; then
 fi
 
 #---- Check out any modules that we have not yet got ----
+declare -a NEW_MODULES
+
 [ -f project.inc ] && project_inc=0
 [ -f toolchain.pri ] && toolchain_pri=0
 for i in ./* ; do
@@ -56,7 +70,8 @@ for i in ./* ; do
         if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/tdp_build ]; then
           cp -rp $COPY_FROM/tdp_build .
         else
-          git "clone" "$remote/tdp_build.git"
+	  NEW_MODULES+=("$remote/tdp_build.git")
+          #git clone "$remote/tdp_build.git"
         fi
         cd $(basename $i)
       fi
@@ -96,7 +111,8 @@ for i in ./* ; do
             if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/$item ]; then
               cp -rp $COPY_FROM/$item .
             else
-              git "clone" "$remote/$item.git"
+	      NEW_MODULES+=("$remote/$item.git")
+              #git clone "$remote/$item.git"
             fi
             cd $(basename $i)
           fi
@@ -108,6 +124,17 @@ for i in ./* ; do
     cd ..
   fi
 done
+
+NEW_MODULES_UNIQUE=($(echo "${NEW_MODULES[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+if (( ${#NEW_MODULES_UNIQUE[@]} )); then
+  if hash parallel 2>/dev/null; then
+    echo "${NEW_MODULES_UNIQUE[@]}" | tr ' ' '\n' | parallel -j $((`nproc`*2)) -I{} git clone {}
+  else
+    for i in "${NEW_MODULES_UNIQUE[@]}"; do 
+      git clone "$i"
+    done
+  fi
+fi
 
 [ "$project_inc" = 2 ] && rm -f project.inc
 [ "$toolchain_pri" = 2 ] && rm -f toolchain.pri

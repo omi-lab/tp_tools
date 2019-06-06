@@ -6,16 +6,25 @@ then
   exit 1
 fi
 
-for i in ./* ; do
-  if [ -d "$i" ]; then
-    directory=$(basename $i)
-    echo "=================================================================="
-    echo $directory
-    cd $directory
-    git add -A
-    git commit -am "$1"
-    git push
-    cd ..
-  fi
-done
+if hash parallel 2>/dev/null; then
+  tdpXListDirs | parallel -j $((`nproc`*2)) -I{} tdpXCommit "\"$1\"" {}
+else
+  echo "\"parallel\" not found, install with one of the following:"
+  echo "  yum install parallel"
+  echo "  dnf install parallel"
+  echo "  apt-get install parallel"
+  for i in ./* ; do
+    if [ -d "$i" ]; then
+      directory=$(basename $i)
+      echo "=================================================================="
+      echo $directory
+      cd $directory
+      git add -A
+      git commit -am "$1"
+      git push
+      cd ..
+    fi
+  done
+fi
+
 echo "=================================================================="
