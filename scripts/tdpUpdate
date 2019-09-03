@@ -9,9 +9,9 @@ fi
 
 if ! hash parallel 2>/dev/null; then
   echo "\"parallel\" not found, install with one of the following:"
-  echo "  yum install parallel"
-  echo "  dnf install parallel"
-  echo "  apt-get install parallel"
+  echo "  yum install -y parallel"
+  echo "  dnf install -y parallel"
+  echo "  apt install -y parallel"
 fi
 
 while [ -n "$1" ]; do
