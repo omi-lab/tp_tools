@@ -64,14 +64,14 @@ for i in ./* ; do
       remote=$(git config --get remote.origin.url | sed "s#^$insteadof#$url#")
       remote=${remote%/*}
       
-      #---- Special case for tdp_build ----
-      if [ ! -d "../tdp_build" ]; then
+      #---- Special case for tp_build ----
+      if [ ! -d "../tp_build" ]; then
         cd ../
-        if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/tdp_build ]; then
-          cp -rp $COPY_FROM/tdp_build .
+        if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/tp_build ]; then
+          cp -rp $COPY_FROM/tp_build .
         else
-	  NEW_MODULES+=("$remote/tdp_build.git")
-          #git clone "$remote/tdp_build.git"
+	        NEW_MODULES+=("$remote/tp_build.git")
+          #git clone "$remote/tp_build.git"
         fi
         cd $(basename $i)
       fi
