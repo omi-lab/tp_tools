@@ -1,5 +1,8 @@
 #!/bin/bash
 
+JOBS=$((`nproc`*2))
+JOBS=$((JOBS<10 ? JOBS : 10))
+
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   echo "Usage:  ${0##*/} [directory] [noupdate]
     directory  directory to copy missing git modules from, instead of cloning
@@ -27,7 +30,7 @@ done
 if [ -z "$NOPULL" ]; then
   #---- Update all modules ----
   if hash parallel 2>/dev/null; then
-    tdpXListDirs | parallel -j $((`nproc`*2)) -I{} tdpXUpdate {}
+    tdpXListDirs | parallel -j $JOBS -I{} tdpXUpdate {}
   else
     for i in ./* ; do
       if [ -d "$i" ]; then
@@ -128,7 +131,7 @@ done
 NEW_MODULES_UNIQUE=($(echo "${NEW_MODULES[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
 if (( ${#NEW_MODULES_UNIQUE[@]} )); then
   if hash parallel 2>/dev/null; then
-    echo "${NEW_MODULES_UNIQUE[@]}" | tr ' ' '\n' | parallel -j $((`nproc`*2)) -I{} git clone {}
+    echo "${NEW_MODULES_UNIQUE[@]}" | tr ' ' '\n' | parallel -j $JOBS -I{} git clone {}
   else
     for i in "${NEW_MODULES_UNIQUE[@]}"; do 
       git clone "$i"

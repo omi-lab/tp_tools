@@ -6,8 +6,11 @@ then
   exit 1
 fi
 
+JOBS=$((`nproc`*2))
+JOBS=$((JOBS<10 ? JOBS : 10))
+
 if hash parallel 2>/dev/null; then
-  tdpXListDirs | parallel -j $((`nproc`*2)) -I{} tdpXCommit "\"$1\"" {}
+  tdpXListDirs | parallel -j $JOBS -I{} tdpXCommit "\"$1\"" {}
 else
   echo "\"parallel\" not found, install with one of the following:"
   echo "  yum install parallel"
