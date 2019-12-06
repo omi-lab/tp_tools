@@ -1,0 +1,59 @@
+#!/bin/bash
+
+JOBS=$((`nproc`*2))
+JOBS=$((JOBS<10 ? JOBS : 10))
+
+echo "=================================================================="
+
+#---- Get any URL translation ----
+insteadof=$(git config --get-regexp 'url.*\.insteadof')
+if [ -n "$insteadof" ]; then
+  url=$(echo $insteadof | sed 's/^url\.\(.*\)\.insteadof .*/\1/')
+  insteadof=$(echo $insteadof | sed 's/^.*\.insteadof //')
+fi
+
+#---- Check out any modules that we have not yet got ----
+declare -a NEW_MODULES
+
+[ -f project.inc ] && project_inc=0
+[ -f toolchain.pri ] && toolchain_pri=0
+for i in ./* ; do
+  if [ -d "$i" ]; then
+
+    cd $(basename $i)
+
+    submodules="submodules.pri"
+    if [ -e "$submodules" ]; then
+
+      remote=$(git config --get remote.origin.url | sed "s#^$insteadof#$url#")
+      remote=${remote%/*}
+          
+      NEW_MODULES+=("tp_build")
+
+      exec<$submodules
+      while read line
+      do
+        if [[ $line == SUBDIRS* ]]; then
+        IFS='=' read -a arr <<< "$line"
+        for item in "${arr[@]:1}"
+        do
+          item=$(echo "$item" | tr -d ' ')
+          NEW_MODULES+=("$item")
+        done
+        fi
+      done
+    fi
+
+    cd ..
+  fi
+done
+
+NEW_MODULES_UNIQUE=($(echo "${NEW_MODULES[@]}" | tr ' ' '\n' | sort -u | tr '\n' ' '))
+if (( ${#NEW_MODULES_UNIQUE[@]} )); then
+  for i in "${NEW_MODULES_UNIQUE[@]}"; do 
+    git submodule add "$remote/$i.git" "./$i"
+  done
+fi
+
+exit 0
+
