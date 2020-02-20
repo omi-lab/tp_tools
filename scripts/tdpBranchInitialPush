@@ -7,11 +7,13 @@ then
 fi
 
 for i in ./* ; do
-  if [ -d "$i" ]; then
+  if [ -e "$i/.git" ]; then
     directory=$(basename $i)    
     cd $directory
     git push --set-upstream origin $1
     cd ..
+  elif [ -d "$i" ]; then
+    echo "$i is not a git repo."
   fi
 done
 

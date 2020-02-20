@@ -1,13 +1,15 @@
 #!/bin/bash
 
 for i in ./* ; do
-  if [ -d "$i" ]; then
+  if [ -e "$i/.git" ]; then
     directory=$(basename $i)
     echo "=================================================================="
     echo $directory
     cd $directory
     git remote -v
     cd ..
+  elif [ -d "$i" ]; then
+    echo "$i is not a git repo."
   fi
 done
 echo "=================================================================="

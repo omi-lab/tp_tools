@@ -1,14 +1,14 @@
 #!/bin/bash
 
-JOBS=$((`nproc`*2))
-JOBS=$((JOBS<10 ? JOBS : 10))
-
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
   echo "Usage:  ${0##*/} [directory] [noupdate]
     directory  directory to copy missing git modules from, instead of cloning
     noupdate   don't update modules except if they are missing"
   exit
 fi
+
+JOBS=$((`nproc`*2))
+JOBS=$((JOBS<10 ? JOBS : 10))
 
 if ! hash parallel 2>/dev/null; then
   echo "\"parallel\" not found, install with one of the following:"
@@ -33,11 +33,13 @@ if [ -z "$NOPULL" ]; then
     tdpXListDirs | parallel -j $JOBS -I{} tdpXUpdate {}
   else
     for i in ./* ; do
-      if [ -d "$i" ]; then
+      if [ -e "$i/.git" ]; then
         directory=$(basename $i)
         cd $directory
         git pull
         cd ..
+      elif [ -d "$i" ]; then
+        echo "$i is not a git repo."
       fi
     done
   fi
@@ -173,7 +175,7 @@ do
     if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/$item ]; then
       cp -rp $COPY_FROM/$item .
     else
-      git "clone" "$remote/$item.git"
+      git clone "$remote/$item.git"
     fi
   fi
 done

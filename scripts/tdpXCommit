@@ -6,12 +6,15 @@ then
   exit 1
 fi
 
-directory=$2
-echo "=================================================================="
-echo $directory
-cd $directory
-git add -A
-git commit -am "$1"
-git push
-cd ..
-
+if [ -e "$2/.git" ]; then
+  directory=$2
+  echo "=================================================================="
+  echo $directory
+  cd $directory
+  git add -A
+  git commit -am "$1"
+  git push
+  cd ..
+elif [ -d "$2" ]; then
+  echo "$2 is not a git repo."
+fi

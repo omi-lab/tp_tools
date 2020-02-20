@@ -1,16 +1,15 @@
 #!/bin/bash
 
 for i in ./* ; do
-  if [ -d "$i" ]; then
+  if [ -e "$i/.git" ]; then
     directory=$(basename $i)
-
-    if [[ $directory == tdp_* ]]; then
-      echo "=================================================================="
-      echo $directory
-      cd $directory
-      git diff HEAD $1/master --name-only
-      cd ..
-    fi
+    echo "=================================================================="
+    echo $directory
+    cd $directory
+    git diff
+    cd ..
+  elif [ -d "$i" ]; then
+    echo "$i is not a git repo."
   fi
 done
 echo "=================================================================="

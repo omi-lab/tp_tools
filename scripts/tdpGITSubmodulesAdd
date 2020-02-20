@@ -18,7 +18,7 @@ declare -a NEW_MODULES
 [ -f project.inc ] && project_inc=0
 [ -f toolchain.pri ] && toolchain_pri=0
 for i in ./* ; do
-  if [ -d "$i" ]; then
+  if [ -e "$i/.git" ]; then
 
     cd $(basename $i)
 
@@ -45,6 +45,8 @@ for i in ./* ; do
     fi
 
     cd ..
+  elif [ -d "$i" ]; then
+    echo "$i is not a git repo."
   fi
 done
 
