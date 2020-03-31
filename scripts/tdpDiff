@@ -6,7 +6,7 @@ for i in ./* ; do
     echo "=================================================================="
     echo $directory
     cd $directory
-    git diff
+    git --no-pager diff
     cd ..
   elif [ -d "$i" ]; then
     echo "$i is not a git repo."
