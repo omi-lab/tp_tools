@@ -2,7 +2,7 @@
 
 if [ "$#" -ne 2 ]
 then
-  echo "Usage: tdpXCommit \"Commit message\" \"Directory\""
+  echo "Usage: TPInternalCommit \"Commit message\" \"Directory\""
   exit 1
 fi
 

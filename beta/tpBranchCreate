@@ -2,7 +2,7 @@
 
 if [ "$#" -ne 1 ]
 then
-  echo "Usage: tdpBranchCreate branch"
+  echo "Usage: tpBranchCreate branch"
   exit 1
 fi
 

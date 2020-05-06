@@ -2,7 +2,7 @@
 
 if [ "$#" -ne 1 ]
 then
-  echo "Usage: tdpCommit \"Commit message\""
+  echo "Usage: tpCommit \"Commit message\""
   exit 1
 fi
 
@@ -10,7 +10,7 @@ JOBS=$((`nproc`*2))
 JOBS=$((JOBS<10 ? JOBS : 10))
 
 if hash parallel 2>/dev/null; then
-  tdpXListDirs | parallel -j $JOBS -I{} tdpXCommit "\"$1\"" {}
+  TPInternalListDirs | parallel -j $JOBS -I{} TPInternalCommit "\"$1\"" {}
 else
   echo "\"parallel\" not found, install with one of the following:"
   echo "  yum install parallel"

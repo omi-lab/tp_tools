@@ -30,7 +30,7 @@ done
 if [ -z "$NOPULL" ]; then
   #---- Update all modules ----
   if hash parallel 2>/dev/null; then
-    tdpXListDirs | parallel -j $JOBS -I{} tdpXUpdate {}
+    TPInternalListDirs | parallel -j $JOBS -I{} TPInternalUpdate {}
   else
     for i in ./* ; do
       if [ -e "$i/.git" ]; then
