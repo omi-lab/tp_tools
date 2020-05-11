@@ -75,8 +75,8 @@ for i in ./* ; do
         if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/tp_build ]; then
           cp -rp $COPY_FROM/tp_build .
         else
-	        NEW_MODULES+=("$remote/tp_build.git")
-          #git clone "$remote/tp_build.git"
+	  NEW_MODULES+=("$remote/tp_build")
+          #git clone "$remote/tp_build"
         fi
         cd $(basename $i)
       fi
@@ -116,8 +116,8 @@ for i in ./* ; do
             if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/$item ]; then
               cp -rp $COPY_FROM/$item .
             else
-	      NEW_MODULES+=("$remote/$item.git")
-              #git clone "$remote/$item.git"
+	      NEW_MODULES+=("$remote/$item")
+              #git clone "$remote/$item"
             fi
             cd $(basename $i)
           fi
@@ -175,7 +175,7 @@ do
     if [ -n "$COPY_FROM" ] && [ -d $COPY_FROM/$item ]; then
       cp -rp $COPY_FROM/$item .
     else
-      git clone "$remote/$item.git"
+      git clone "$remote/$item"
     fi
   fi
 done
