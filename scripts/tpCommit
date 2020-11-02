@@ -16,6 +16,7 @@ else
   echo "  yum install parallel"
   echo "  dnf install parallel"
   echo "  apt-get install parallel"
+  echo "  brew install parallel"
   for i in ./* ; do
     if [ -e "$i/.git" ]; then
       directory=$(basename $i)

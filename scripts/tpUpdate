@@ -15,6 +15,7 @@ if ! hash parallel 2>/dev/null; then
   echo "  yum install -y parallel"
   echo "  dnf install -y parallel"
   echo "  apt install -y parallel"
+  echo "  brew install parallel"
 fi
 
 while [ -n "$1" ]; do
