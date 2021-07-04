@@ -6,10 +6,8 @@ then
   exit 1
 fi
 
-cat <<EOT >> ${1}/hooks/post-commit
+cat <<EOT >> ${1}/hooks/post-receive
 git push ${2} -f --mirror
 EOT
 
-chmod +x ${1}/hooks/post-commit
-
-#cd ${1} git remote add mirror ${2}
+chmod +x ${1}/hooks/post-receive
