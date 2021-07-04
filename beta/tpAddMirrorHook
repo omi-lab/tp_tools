@@ -7,9 +7,9 @@ then
 fi
 
 cat <<EOT >> ${1}/hooks/post-commit
-git push mirror -f --mirror
+git push ${2} -f --mirror
 EOT
 
 chmod +x ${1}/hooks/post-commit
 
-cd ${1} git remote add mirror ${2}
+#cd ${1} git remote add mirror ${2}
