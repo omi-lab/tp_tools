@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ "$#" -ne 2 ]
+then
+  echo "Usage: tpAddMirrorHook local_path remote_uri"
+  exit 1
+fi
+
+cat <<EOT >> ${1}/hooks/post-commit
+git push ${2} -f --mirror
+EOT
+
+chmod +x ${1}/hooks/post-commit

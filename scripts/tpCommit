@@ -7,7 +7,7 @@ then
 fi
 
 JOBS=$((`nproc`*2))
-JOBS=$((JOBS<10 ? JOBS : 10))
+JOBS=$((JOBS<7 ? JOBS : 7))
 
 if hash parallel 2>/dev/null; then
   TPInternalListDirs | parallel -j $JOBS -I{} TPInternalCommit "\"$1\"" {}
