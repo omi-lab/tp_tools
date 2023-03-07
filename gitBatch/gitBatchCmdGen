@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: gitBatchCmdGen branch <command>"
+  exit 1
+fi
+
+for i in */ ; do
+  if [ -e "$i/.git" ]; then
+    dir=$(basename $i)
+    echo "pushd ${dir}; ${1}; popd"
+  fi
+done

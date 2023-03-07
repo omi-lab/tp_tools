@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: gitBatchParallel branch <command>"
+  exit 1
+fi
+
+`dirname ${0}`/gitBatchCmdGen "${1}" | parallel -j8 {1}
