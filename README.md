@@ -24,7 +24,7 @@ submodules.pri files.
 * **tpCommit** - Use tpCommit followed by a message to commit and push all changes in each git 
 module found in this directory.
 
-## Usage gitBatchParalell set of commands
+## Usage of gitBatchParalell set of commands
 
 **Please note**, this commands are bash scripts. You may run them only with bash. Sripts also use parallel utility. It should be accessible from bash environment.
 
