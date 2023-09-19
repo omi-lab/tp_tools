@@ -33,7 +33,7 @@ for i in ./* ; do
       exec<$submodules
       while read line
       do
-        if [[ $line == SUBDIRS* ]]; then
+        if [[ $line == SUBDIRS* ]] || [[ $line == SUBPROJECTS* ]]; then
         IFS='=' read -a arr <<< "$line"
         for item in "${arr[@]:1}"
         do
