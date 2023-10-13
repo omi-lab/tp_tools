@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: tpMerge branch"
+  exit 1
+fi
+
+nl=$'\n'
+se=$'\t'
+
+for i in ./* ; do
+  if [ -e "$i/.git" ]; then
+    directory=$(basename $i)    
+    echo "=================================================================="
+    cd $directory
+    git merge $1
+    cd ..
+  elif [ -d "$i" ]; then
+    echo "$i is not a git repo."
+  fi
+done
+echo "=================================================================="
