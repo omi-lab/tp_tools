@@ -24,6 +24,30 @@ submodules.pri files.
 * **tpCommit** - Use tpCommit followed by a message to commit and push all changes in each git 
 module found in this directory.
 
+## Usage of gitBatchParalell set of commands
+
+**Please note**, this commands are bash scripts. You may run them only with bash. Sripts also use parallel utility. It should be accessible from bash environment.
+
+This represented by set of commands:
+  * **gitBatchParallel**
+  * **gitBatchParallelIfChanged**
+  * **gitBatchParallelIfUpdate**
+   
+Any command from the list above being started in the directory. Scan all 1-st level folders within it and checks if it is git repository and, then, run command for that repostiory. Command shall be passed as argument. I.e. examle:
+```
+gitBatchParallel 'git status'
+```
+will run "git status" command within every directory which is under git version control system.
+Similary,
+```
+gitBatchParallel 'git pull'
+gitBatchParallel 'git push'
+```
+will run "git pull" and "git pull" command.
+
+suffix **...IfChanged** will run command only for directory which is not committed (has changes).
+and **...IfUpdate** will run command only for directory which is not up to date with remote/... branch repo. I.e. ahead of remote repo. 
+
 ## Examples
 
 * [Examples List](https://github.com/tdp-libs/examples) - List of the example programs using the
