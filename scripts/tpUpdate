@@ -57,7 +57,6 @@ fi
 #---- Check out any modules that we have not yet got ----
 declare -a NEW_MODULES
 
-[ -f project.inc ] && project_inc=0
 [ -f toolchain.pri ] && toolchain_pri=0
 for i in ./* ; do
   if [ -d "$i" ]; then
@@ -80,17 +79,6 @@ for i in ./* ; do
           #git clone "$remote/tp_build"
         fi
         cd $(basename $i)
-      fi
-      
-      #---- Copy project.inc into top level directory ----
-      if [ -f project.inc ]; then
-        if [ ! -f ../project.inc ]; then
-          cp project.inc ../
-          project_inc=1
-        elif [ "$project_inc" = 1 ]; then
-          echo "Error! project.inc found in more than one sub-directory"
-          project_inc=2
-        fi
       fi
       
       #---- Copy toolchain.pri into top level directory ----
@@ -142,19 +130,18 @@ if (( ${#NEW_MODULES_UNIQUE[@]} )); then
   fi
 fi
 
-[ "$project_inc" = 2 ] && rm -f project.inc
 [ "$toolchain_pri" = 2 ] && rm -f toolchain.pri
 
 TMP_DB_FILE="/tmp/$$_make.db.txt"
 MODULE_SUBDIRS=""
 
-env -i make -pn -f ./project.inc > $TMP_DB_FILE 2>/dev/null
-while read var assign value; do
-  if [[ ${var} = MODULES ]] && [[ ${assign} = '=' ]]; then
-    MODULES+=" $value"
-    break
-  fi
-done < $TMP_DB_FILE
+# env -i make -pn -f ./project.inc > $TMP_DB_FILE 2>/dev/null
+# while read var assign value; do
+#   if [[ ${var} = MODULES ]] && [[ ${assign} = '=' ]]; then
+#     MODULES+=" $value"
+#     break
+#   fi
+# done < $TMP_DB_FILE
 
 
 for MODULE in ${MODULES}
