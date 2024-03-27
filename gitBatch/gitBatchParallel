@@ -1,9 +1,10 @@
 #!/bin/bash
 
-if [ "$#" -ne 1 ]
+if [ "$#" -lt 1 ]
 then
-  echo "Usage: gitBatchParallel branch <command>"
+  echo "Usage: gitBatchParallel branch <command> $all_params"
   exit 1
 fi
 
-`dirname ${0}`/gitBatchCmdGen "${1}" | parallel -j8 {1}
+#echo $@
+`dirname ${0}`/gitBatchCmdGen $@ | parallel -j8 {1}
