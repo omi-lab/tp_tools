@@ -9,7 +9,7 @@ fi
 
 for i in */; do
   if [ -e "$i/.git" ]; then
-    dir=$(basename $i)    
+    dir=$(basename $i)
     echo "pushd ${dir} > /dev/null; git status | grep 'nothing to commit' > /dev/null; changesStatus=\$?; if [ \"\${changesStatus}\" -ne 0 ]; then $@; fi; popd > /dev/null"
   fi
 done

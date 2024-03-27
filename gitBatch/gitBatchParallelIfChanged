@@ -6,4 +6,10 @@ then
   exit 1
 fi
 
-`dirname ${0}`/gitBatchCmdGenIfChanged $@ | parallel -j8 {1}
+#quoting all params with single quotes and concatenate them in signle line
+cmd_line=""
+for param in "$@"; do
+	cmd_line="$cmd_line '$param'"
+done
+
+`dirname ${0}`/gitBatchCmdGenIfChanged "$cmd_line" | parallel -j8 {1}
