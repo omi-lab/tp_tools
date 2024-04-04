@@ -16,6 +16,3 @@ for i in ./* ; do
     echo "$i is not a git repo."
   fi
 done
-
-echo "$result" | column -t -s "$se"
-
