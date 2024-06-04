@@ -6,10 +6,8 @@ then
   exit 1
 fi
 
-#quoting all params with single quotes and concatenate them in signle line
-cmd_line=""
-for param in "$@"; do
-	cmd_line="$cmd_line '$param'"
-done
+# as quoted parameters lost quotes we add them again to pass to another script
+cmd_line=("$@") # cmd_line saved as array of input parameters
+cmd_line=${cmd_line[*]@Q} #rewritting input array by quoting each parameter
 
-`dirname ${0}`/gitBatchCmdGen "$cmd_line" | parallel -j8 {1}
+`dirname ${0}`/gitBatchCmdGen $cmd_line | parallel -j8 {1}

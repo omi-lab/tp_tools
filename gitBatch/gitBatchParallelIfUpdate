@@ -6,4 +6,8 @@ then
   exit 1
 fi
 
-`dirname ${0}`/gitBatchCmdGenIfUpdate $* | parallel -j8 {1}
+# as quoted parameters lost quotes we add them again to pass to another script
+cmd_line=("$@") # cmd_line saved as array of input parameters
+cmd_line=${cmd_line[*]@Q} #rewritting input array by quoting each parameter
+
+`dirname ${0}`/gitBatchCmdGenIfUpdate "$cmd_line" | parallel -j8 {1}
